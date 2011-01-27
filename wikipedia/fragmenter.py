@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 from parser import subTree
 import xml.sax
 import sys
@@ -35,6 +37,9 @@ def puts(text):
 
 
 if __name__=="__main__":
+    if len(sys.argv) < 3:
+        print "Usage: $fragmenter.py wikipediaDump outputDirectory"
+        sys.exit()
     outputPath = sys.argv[2]
     parser = xml.sax.make_parser()
     parser.setContentHandler(subTree("page", generateNewXML))

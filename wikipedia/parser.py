@@ -45,4 +45,8 @@ class subTree(xml.sax.ContentHandler):
     
     def characters(self, content):
         self.text += content
-        
+    
+def rmExTags(text):
+    start = text.find('>')
+    end = text.rfind('<')
+    return text[start+1:end]
