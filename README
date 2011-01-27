@@ -2,5 +2,16 @@ To get a dump of arabic wikipedia
 http://download.wikimedia.org/arwiki/
 
 the one that I downloaded
-http://download.wikimedia.org/arwiki/20110121/arwiki-20110121-pages-articles.xml.bz2
+    |wget -c http://download.wikimedia.org/arwiki/20110121/arwiki-20110121-pages-articles.xml.bz2
+
+To fragment the wikipedia dump to different xml files, each contain one article
+    |$wikipedia/fragmenter.py wikiDump.xml outputDirectory
+The outputDirectory will contain all the files. The files are named after the ids of the wikipedia articles.
+
+In each xml file, the text is contained between the <text></text> tags. Moreover, the text available with the wiki markup language
+doStrip contains most of the formatting need to remove the wiki markup language.
+
+To extract the text and remove the markup language.
+$wikipedia/formatter.py inputFile
+This will generate an output file called inputFile.f
 

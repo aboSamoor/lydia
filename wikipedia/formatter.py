@@ -30,6 +30,10 @@ def articles(dir):
                     yield f
 
 if __name__=="__main__":
+    if len(sys.argv) < 2:
+        print "Usage: $formatter.py File"
+        print "Usage: $formatter.py Direcotory"
+        sys.exit()
     p = xml.sax.make_parser()
     contentHandler = subTree("text", process)
     p.setContentHandler(contentHandler)

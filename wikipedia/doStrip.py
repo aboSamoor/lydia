@@ -81,27 +81,29 @@ reSubWith.append(internalLinkSub)
 # 13: HTML Coded Characters (Full List: http://www.w3.org/TR/html401/sgml/entities.html)
 HTMLCodedChars = re.compile("&([^ ]*?);")
 reObjs.append(HTMLCodedChars)
+
 def codedChars(matchObj):
-	entity = matchObj.group(1).lower()
-	if entity == "nbsp":
-		return " "
-	if entity == "ndash":
-		return "-"
-	if entity == "mdash":
-		return "-"
-	if entity == "lt":
-		return "<"
-	if entity == "gt":
-		return ">"
-	if entity == "amp":
-		return "&"
-	if entity == "quot":
-		return "\""
-	if entity[0] == "#":
-		if entity[1] == "x":
-			return unichr(int(entity[2:], 16))
-		return unichr(int(entity[1:]))
-	return ""
+    entity = matchObj.group(1).lower()
+    if entity == "nbsp":
+        return " "
+    if entity == "ndash":
+        return "-"
+    if entity == "mdash":
+        return "-"
+    if entity == "lt":
+        return "<"
+    if entity == "gt":
+        return ">"
+    if entity == "amp":
+        return "&"
+    if entity == "quot":
+        return "\""
+    if len(entity) > 1:
+        if entity[0] == "#":
+            if entity[1] == "x":
+                return unichr(int(entity[2:], 16))
+            return unichr(int(entity[1:]))
+        return ""
 reSubWith.append(codedChars)
 
 #14 Extra new lines and spaces
