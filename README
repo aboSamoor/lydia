@@ -15,3 +15,4 @@ To extract the text and remove the markup language.
 $wikipedia/formatter.py inputFile
 This will generate an output file called inputFile.f
 
+# test line for arif
