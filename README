@@ -15,3 +15,8 @@ To extract the text and remove the markup language.
 $wikipedia/formatter.py inputFile
 This will generate an output file called inputFile.f
 
+$aner/NER.py folderName
+It will run over all the files that have .f extension, it will delete all the temp files except .bw.post.NER file which has five columns. The stats will will be stored in folderName/stats
+
+$aner/NER filename
+It will run on the file passed and make .bw.ner file, it will not delete any temp files.
