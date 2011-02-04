@@ -155,7 +155,8 @@ if __name__=="__main__":
         partial = parsePostNER(fName+".bw.post.NER")
         add2Results(partial, results)
         cleanTempFiles(fName)
-    fh = open('/home/eid/Desktop/stats','w')
+    statFile = os.path.join(folder, 'stats')
+    fh = open(statFile,'w')
     print results
     pickle.dump(results,fh)
     fh.close()
