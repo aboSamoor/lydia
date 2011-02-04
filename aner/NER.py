@@ -77,16 +77,19 @@ def get_columns(text, delimiter, cols):
 def ner(fin):
     AMIRA(fin) 
     txt1 = getText(fin+".bw.TOK.NORM.POS.bpcOut")
+    print  "Preparing data for NER"
     txt2 = get_columns(txt1, '\t', [0,1,10,11])
     fPre = fin+".bw.pre.NER"
     writeText(fPre, txt2)
-
     fAfter = fin + ".bw.post.NER"
+    print "Runnin yamcha for NER"
     yamcha(fPre, fAfter, settings.amira_dir+"/SVMmodel.model")
 
     txt3 = getText(fAfter)
+    print "Producing formatted NER output"
     txt4 = get_columns(txt3, '\t', [0,4])
     writeText(fin+".bw.ner", txt4)
+    print ""
 
 def parsePostNER(fin):
     statistics = {}
@@ -111,7 +114,10 @@ def cleanTempFiles(fin):
         fin = os.path.abspath(fin)
         exts = ['.amirabpc', '.amirapos', '.amiratok', '.bw.ner', '.bw.pre.NER', '.bw.TOK.NORM.POS.bpcOut', '.bw.TOK.NORM.posOut']
         for i in exts:
-            os.remove(fin+i)
+            if os.path.isfile(fin+i):
+                os.remove(fin+i)
+            else:
+                print fin+i,"does not exists"
 
 
 def files(folder, pattern):
@@ -131,7 +137,7 @@ def add2Results(partial, store):
                 store[k] = {}
             if not store[k].has_key(v):
                 store[k][v] = 0
-            store[k][v] += 1
+            store[k][v] += partial[k][v]
     return store
 
             
@@ -148,7 +154,7 @@ if __name__=="__main__":
         exit()
 
     folder = f
-    for fName in files(folder, ".*?.f"):
+    for fName in files(folder, "(.*?)\.f$"):
         fName = os.path.abspath(fName)
         print fName
         ner(fName)
