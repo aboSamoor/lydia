@@ -12,7 +12,7 @@ def utf8tobw(fin,fout):
     cmd = "cat "+fin+" | perl clean-utf8.pl clean-utf8-MAP | perl ArabicTokenizer.pl UTF-8 BUCKWALTER notokenization > "+fout
     current = os.path.abspath(os.path.curdir)
     os.chdir(amira_dir+"/bin")
-    os.system(cmd) 
+    os.system(cmd)
     os.chdir(current)
 
 def bwtoutf8(fin,fout):
@@ -20,21 +20,21 @@ def bwtoutf8(fin,fout):
     cmd = "cat "+fin+" | perl clean-utf8.pl clean-utf8-MAP | perl ArabicTokenizer.pl BUCKWALTER UTF-8 notokenization > "+fout
     current = os.path.abspath(os.path.curdir)
     os.chdir(amira_dir+"/bin")
-    os.system(cmd) 
+    os.system(cmd)
     os.chdir(current)
 
 def tokenize(fName, amira_dir):
     cmd="perl AMIRA.pl config=../configs/tok_only.amiraconfig file="+fName
     current = os.path.abspath(os.path.curdir)
     os.chdir(amira_dir+"/bin")
-    os.system(cmd) 
+    os.system(cmd)
     os.chdir(current)
 
 def tok_pos(fName, amira_dir):
     cmd="perl AMIRA.pl config=../configs/tok_pos.amiraconfig file="+fName
     current = os.path.abspath(os.path.curdir)
     os.chdir(amira_dir+"/bin")
-    os.system(cmd) 
+    os.system(cmd)
     os.chdir(current)
 
 def yamcha(fin, fout, model):
@@ -46,7 +46,7 @@ def AMIRA(fin):
     cmd = "perl AMIRA.pl config=../configs/all.amiraconfig file="+fin
     current = os.path.abspath(os.path.curdir)
     os.chdir(amira_dir+"/bin")
-    os.system(cmd) 
+    os.system(cmd)
     os.chdir(current)
 
 def getText(fin):
@@ -67,7 +67,7 @@ def get_columns(text, delimiter, cols):
     result = []
     for line in text.splitlines():
         if line != '':
-            templine = line.split(delimiter)    
+            templine = line.split(delimiter)
             newline = [templine[j] for j in cols]
             result.append(delimiter.join(newline))
         else:
@@ -75,9 +75,9 @@ def get_columns(text, delimiter, cols):
     return '\n'.join(result)
 
 def ner(fin):
-    AMIRA(fin) 
+    AMIRA(fin)
     txt1 = getText(fin+".bw.TOK.NORM.POS.bpcOut")
-    print  "Preparing data for NER"
+    print "Preparing data for NER"
     txt2 = get_columns(txt1, '\t', [0,1,10,11])
     fPre = fin+".bw.pre.NER"
     writeText(fPre, txt2)
@@ -97,7 +97,7 @@ def parsePostNER(fin):
     for line in text.splitlines():
         if line != '':
             cols = [word for word in line.split('\t')]
-            if  len(cols) != 5:
+            if len(cols) != 5:
                 print line
                 print "not well formatted line"
                 continue
