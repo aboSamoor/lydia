@@ -5,6 +5,7 @@ import sys
 import NER
 import re
 
+
 def getBinary(fin):
     fin = os.path.abspath(fin)
     fh = open(fin, 'rb')
@@ -34,8 +35,11 @@ def getText(fin):
 def writeText(fout, text):
     fout = os.path.abspath(fout)
     fh = open(fout, 'w')
-    text = fh.write(text.encode('utf-8'))
+    text = fh.write(text)
     fh.close()
+
+def countCols(line, delim):
+    return len(line.split(delim))
     
 def fixCols(fin):
     txt = getText(fin)
@@ -44,6 +48,12 @@ def fixCols(fin):
     endStmt = re.compile(r"(\n[!|?|.] O\n)")
     txt2 = endStmt.sub("\\1\n",txt1)
     writeText(fin+".fix",txt2)
+
+def rows(text, delim):
+    count = countCols(text.splitlines()[0], delim)
+    for line in text.splitlines():
+        if len(line.split(delim)) == count:
+            yield line
 
 if __name__== "__main__":
     fName = os.path.abspath(sys.argv[1])

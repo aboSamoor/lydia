@@ -17,7 +17,7 @@ def addNewlines(fin, fout):
     fin = os.path.abspath(fin)
     fout = os.path.abspath(fout)
     text = NER.getText(fin)
-    txt = re.sub(r"([.|?|!]\s*O)",'\\1\n',text)
+    txt = re.sub(r"(^[.|?|!].*)",'\\1\n',text)
     NER.writeText(fout, txt)
 
 if __name__=="__main__":

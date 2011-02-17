@@ -59,7 +59,7 @@ def getText(fin):
 def writeText(fout, text):
     fout = os.path.abspath(fout)
     fh = open(fout, 'w')
-    text = fh.write(text.encode('utf-8'))
+    text = fh.write(text)
     fh.close()
     
 
@@ -127,7 +127,7 @@ def files(folder, pattern):
         print "this is a file"
         yield ''
     for fName in os.listdir(folder):
-        if ptrn.search(fName):
+        if ptrn.search(fName) and not os.path.isfile(fName+".bw.post.NER"):
             yield os.path.join(folder,fName)
 
 def add2Results(partial, store):
