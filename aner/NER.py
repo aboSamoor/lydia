@@ -5,7 +5,7 @@ import os
 import settings
 import re
 import pickle
-
+import tools
 
 def utf8tobw(fin,fout):
     amira_dir = settings.amira_dir
@@ -63,22 +63,12 @@ def writeText(fout, text):
     fh.close()
     
 
-def get_columns(text, delimiter, cols):
-    result = []
-    for line in text.splitlines():
-        if line != '':
-            templine = line.split(delimiter)
-            newline = [templine[j] for j in cols]
-            result.append(delimiter.join(newline))
-        else:
-            result.append(line)
-    return '\n'.join(result)
 
 def ner(fin):
     AMIRA(fin)
     txt1 = getText(fin+".bw.TOK.NORM.POS.bpcOut")
     print "Preparing data for NER"
-    txt2 = get_columns(txt1, '\t', [0,1,10,11])
+    txt2 = tools.get_columns(txt1, '\t', [0,1,10,11])
     fPre = fin+".bw.pre.NER"
     writeText(fPre, txt2)
     fAfter = fin + ".bw.post.NER"
@@ -87,28 +77,10 @@ def ner(fin):
 
     txt3 = getText(fAfter)
     print "Producing formatted NER output"
-    txt4 = get_columns(txt3, '\t', [0,4])
+    txt4 = tools.get_columns(txt3, '\t', [0,4])
     writeText(fin+".bw.ner", txt4)
     print ""
 
-def parsePostNER(fin):
-    statistics = {}
-    text = getText(fin)
-    for line in text.splitlines():
-        if line != '':
-            cols = [word for word in line.split('\t')]
-            if len(cols) != 5:
-                print line
-                print "not well formatted line"
-                continue
-            else:
-                if cols[1] == 'NNP':
-                    if not statistics.has_key(cols[0]):
-                        statistics[cols[0]] = {}
-                    if not statistics[cols[0]].has_key(cols[4]):
-                            statistics[cols[0]][cols[4]]=0
-                    statistics[cols[0]][cols[4]] += 1
-    return statistics
         
 def cleanTempFiles(fin):
         fin = os.path.abspath(fin)
@@ -118,28 +90,6 @@ def cleanTempFiles(fin):
                 os.remove(fin+i)
             else:
                 print fin+i,"does not exists"
-
-
-def files(folder, pattern):
-    folder = os.path.abspath(folder)
-    ptrn = re.compile(pattern)
-    if not os.path.isdir(folder):
-        print "this is a file"
-        yield ''
-    for fName in os.listdir(folder):
-        if ptrn.search(fName) and not os.path.isfile(fName+".bw.post.NER"):
-            yield os.path.join(folder,fName)
-
-def add2Results(partial, store):
-    for k in partial.keys():
-        for v in partial[k].keys():
-            if not store.has_key(k):
-                store[k] = {}
-            if not store[k].has_key(v):
-                store[k][v] = 0
-            store[k][v] += partial[k][v]
-    return store
-
             
 
 if __name__=="__main__":
@@ -154,7 +104,7 @@ if __name__=="__main__":
         exit()
 
     folder = f
-    for fName in files(folder, "(.*?)\.f$"):
+    for fName in tools.files(folder, "(.*?)\.f$"):
         fName = os.path.abspath(fName)
         print fName
         ner(fName)
