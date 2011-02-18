@@ -13,8 +13,8 @@ def getTags(store):
 
 class record():
     def __init__(self, dictionary, word):
-        self.tags = {'I-FAC':0, 'I-LOC':1, 'B-ORG':2, 'O':3, 'B-PER':4, 'I-PER':5, 'B-FAC':6, 'I-ORG':7, 'B-LOC':8}
-        self.freqs = [0, 0, 0, 0, 0, 0, 0, 0, 0]
+        self.tags = {'I-FAC':0, 'I-LOC':1, 'B-ORG':2, 'O':3, 'B-PER':4, 'I-PER':5, 'B-FAC':6, 'I-ORG':7, 'B-LOC':8, 'PER':9, 'LOC':10, 'ORG':11}
+        self.freqs = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
         for k in dictionary.keys():
             self.freqs[self.tags[k]] = dictionary[k]
             self.word = word
