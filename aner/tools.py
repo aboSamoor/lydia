@@ -5,6 +5,26 @@ import sys
 import NER
 import re
 
+def get_columns(text, delimiter, cols):
+    result = []
+    for line in text.splitlines():
+        if line != '':
+            templine = line.split(delimiter)
+            newline = [templine[j] for j in cols]
+            result.append(delimiter.join(newline))
+        else:
+            result.append(line)
+    return '\n'.join(result)
+
+def files(folder, pattern):
+    folder = os.path.abspath(folder)
+    ptrn = re.compile(pattern)
+    if not os.path.isdir(folder):
+        print "this is a file"
+        yield ''
+    for fName in os.listdir(folder):
+        if ptrn.search(fName) and not os.path.isfile(fName+".bw.post.NER"):
+            yield os.path.join(folder,fName)
 
 def getBinary(fin):
     fin = os.path.abspath(fin)
