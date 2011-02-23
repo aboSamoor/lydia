@@ -27,9 +27,9 @@ class store():
             res = self.op(item)
             if res:
                 self.dictionary[item]= res
-                return self.dictionary[item]
             else:
                 return ''
+        return self.dictionary[item]
 
     def save(self):
         fh = open(self.file, 'w')
