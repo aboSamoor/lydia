@@ -5,9 +5,11 @@ import sys
 import settings
 import re
 import tools
-import pickle
+import json
 
 
+def isNNP(line):
+    return line["POS"][:3] == "NNP"
 
 def parsePostNER(fin):
     statistics = {}
@@ -28,6 +30,18 @@ def parsePostNER(fin):
                     statistics[cols[0]][cols[4]] += 1
     return statistics
 
+def parseJson(fin, contraint, feature):
+    jText = json.load(open(fin, 'r'))
+    statistics = {}
+    lines = filter(constraint, jText)
+    for line in lines:
+        if not statistics.haskey(line["word"])
+            statistics["word"] = {}
+        if not statistics["word"].has_key(line["word"][feature]):
+            statitics["word"][feature] = 0
+        statistics["word"][feature] += 1 
+    return statistics
+
 def add2Results(partial, store):
     for k in partial.keys():
         for v in partial[k].keys():
@@ -41,14 +55,19 @@ def add2Results(partial, store):
 if __name__=="__main__":
     amira_dir = settings.amira_dir
     results = {}
+    if len(sys.argv) < 3:
+        print "usage: getStats.py folder format"
     folder = os.path.abspath(sys.argv[1])
-    for fName in tools.files(folder, "(.*?)\.t$"):
+    fmt  = sys.argv[2]
+    for fName in tools.files(folder, ".*"):
         fName = os.path.abspath(fName)
         print fName
-        partial = parsePostNER(fName)
+        if fmt = 'json':
+            partial = parseJson(fName, isNNP, "NER")
+        else:
+            partial = parsePostNER(fName)
         add2Results(partial, results)
     statFile = os.path.join(folder, 'stats')
     fh = open(statFile,'w')
-    print results
-    pickle.dump(results,fh)
+    json.dump(results,fh)
     fh.close()
