@@ -24,6 +24,7 @@ def localGroup(fName):
                 curLine = lines[i]
             i = i-1
             newLine["word"] = txt2
+            newLine["virtual"] = True
         elif curLine["NER"]== "LOC":
             while curLine["NER"] == "LOC"  or curLine["POS"] =="DET":
                 txt2 = txt2 +curLine["word"]+' '
@@ -31,6 +32,7 @@ def localGroup(fName):
                 curLine = lines[i]
             i = i-1
             newLine["word"] = txt2
+            newLine["virtual"] = True
         elif curLine["NER"]== "ORG":
             while curLine["NER"] == "ORG" or curLine["POS"] =="DET":
                 txt2 = txt2+curLine[0]+' '
@@ -38,8 +40,10 @@ def localGroup(fName):
                 curLine = lines[i]
             i = i-1
             newLine["word"] = txt2
+            newLine["virtual"] = True
         else:
             newLine["word"] = curLine["word"]            
+            
         i = i+1
         result.append(newLine)
     json.dump(result,f)
