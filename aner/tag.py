@@ -32,6 +32,8 @@ def tag(jText, dic):
     return jText
 
 if __name__ == "__main__":
+    if len(sys.argv) < 3:
+        print "usage: tag.py dictionary file\nfile expected in json format"
     f = os.path.abspath(sys.argv[2])
     dicName = os.path.abspath(sys.argv[1])
     dictionary = pickle.load(open(dicName,'r'))

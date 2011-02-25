@@ -22,6 +22,8 @@ class record():
         return self.word+','+','.join([str(i) for i in self.freqs])
 
 if __name__=="__main__":
+    if len(sys.argv) < 2:
+        print "usage: stat2csv.py fileName\n the file should in json format"
     f = os.path.abspath(sys.argv[1])
     store = json.load(open(f ,'r'))
     records = []

@@ -56,7 +56,7 @@ if __name__=="__main__":
     amira_dir = settings.amira_dir
     results = {}
     if len(sys.argv) < 3:
-        print "usage: getStats.py folder format"
+        print "usage: getStats.py folder format[json|...]\nFolder should contain files in .t extension"
     folder = os.path.abspath(sys.argv[1])
     fmt  = sys.argv[2]
     for fName in tools.files(folder, ".*"):
