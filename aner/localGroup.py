@@ -4,43 +4,52 @@ import os
 import sys
 import tools
 import pickle
+import json
 
 def localGroup(fName):
-    txt = tools.getText(fName)
-    lines = txt.splitlines()
+    jText = json.load(open(fName,'r'))
+    f = open(fName+'.o','w')
+    lines = jText
     length = len(lines)
     i = 0
-    txt2 = ''
+    result = []
     while i < length:
-        words = lines[i].split(' ')
-        print words    
-        print words[-1]
-        if words[-1]== "PER":
-            while words[-1] == "PER":
-                txt2 = txt2 +' '+ words[0]
+        curLine = lines[i]
+        newLine = curLine
+        txt2 = ''
+        if curLine["NER"]== "PER":
+            while curLine["NER"] == "PER" or curLine["POS"] =="DET":
+                txt2 = txt2 + curLine["word"] +' ' 
                 i = i+1
-                words = lines[i].split(' ')
-            txt2 = txt2+' PER\n'
+                curLine = lines[i]
             i = i-1
-        elif words[-1]== "LOC":
-            while words[-1] == "LOC":
-                txt2 = txt2 +' '+ words[0]
+            newLine["word"] = txt2
+            newLine["virtual"] = True
+        elif curLine["NER"]== "LOC":
+            while curLine["NER"] == "LOC"  or curLine["POS"] =="DET":
+                txt2 = txt2 +curLine["word"]+' '
                 i = i+1
-                words = lines[i].split(' ')
-            txt2 = txt2+' LOC\n'
+                curLine = lines[i]
             i = i-1
-        elif words[-1]== "ORG":
-            while words[-1] == "ORG":
-                txt2 = txt2 +' '+ words[0]
+            newLine["word"] = txt2
+            newLine["virtual"] = True
+        elif curLine["NER"]== "ORG":
+            while curLine["NER"] == "ORG" or curLine["POS"] =="DET":
+                txt2 = txt2+curLine[0]+' '
                 i = i+1
-                words = lines[i].split(' ')
-            txt2 = txt2+' ORG\n'
+                curLine = lines[i]
             i = i-1
+            newLine["word"] = txt2
+            newLine["virtual"] = True
         else:
-            txt2 = txt2+words[0]+' '+words[-1]+'\n'
-            print txt2
+            newLine["word"] = curLine["word"]            
+            
         i = i+1
-    tools.writeText(fName+'.o',txt2)    
+        result.append(newLine)
+    json.dump(result,f)
+    f.close()
+    
+    
 
 if __name__ == "__main__":
     fName = os.path.abspath(sys.argv[1])    
