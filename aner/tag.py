@@ -31,18 +31,42 @@ def tag(jText, dic):
                 curLine["NER"] = list(dic[curLine["word"]])[0]
     return jText
 
+def print_exception():
+    exc_type, exc_value = sys.exc_info()[:2]
+    print 'Handling %s exception with message "%s"' % \
+        (exc_type.__name__, exc_value)
+
+def tagFile(f, dictionary):
+    try:
+        jText = json.load(open(f, 'r'))
+    except:
+        print "Error "+ f +" failed to be loaded"
+        print_exception()
+        return -1
+    jNewText = tag(jText, dictionary)
+    fh = open(f+".t", 'w')
+    try:
+        json.dump(jNewText, fh)
+        fh.close()
+    except:
+        print "Error "+ f +" failed to be written"
+        print_exception()
+        fh.close()
+        os.remove(f+".t")
+
 if __name__ == "__main__":
     if len(sys.argv) < 3:
         print "usage: tag.py dictionary file\nfile expected in json format"
     f = os.path.abspath(sys.argv[2])
     dicName = os.path.abspath(sys.argv[1])
     dictionary = pickle.load(open(dicName,'r'))
-    if not os.path.isfile(f):
-        print "usage: tag.py dictionary fileName ....." 
-        sys.exit()
-    jText = json.load(open(f, 'r'))
-    print f
-    jNewText = tag(jText, dictionary)
-    fh = open(f+".t", 'w')
-    json.dump(jNewText, fh)
-    fh.close()
+    if os.path.isfile(f):
+        tagFile(f, dictionary)
+    elif os.path.isdir(f):
+        i = 0
+        for fName in tools.files(f, ".*\.json$"):
+            if i%100 == 0:
+                print "finished", i, "files"
+            tagFile(fName,dictionary)
+            i+=1
+
