@@ -1,7 +1,7 @@
 #! /usr/bin/env python
 import os, sys
 import tools
-import pickle
+import json
 
 def getTags(store):
     b=set()
@@ -23,7 +23,7 @@ class record():
 
 if __name__=="__main__":
     f = os.path.abspath(sys.argv[1])
-    store = pickle.load(open(f ,'r'))
+    store = json.load(open(f ,'r'))
     records = []
     for k in store.keys():
         records.append(record(store[k],k))
