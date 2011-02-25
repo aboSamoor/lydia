@@ -30,16 +30,16 @@ def parsePostNER(fin):
                     statistics[cols[0]][cols[4]] += 1
     return statistics
 
-def parseJson(fin, contraint, feature):
+def parseJson(fin, constraint, feature):
     jText = json.load(open(fin, 'r'))
     statistics = {}
     lines = filter(constraint, jText)
     for line in lines:
-        if not statistics.haskey(line["word"])
-            statistics["word"] = {}
-        if not statistics["word"].has_key(line["word"][feature]):
-            statitics["word"][feature] = 0
-        statistics["word"][feature] += 1 
+        if not statistics.has_key(line["word"]):
+            statistics[line["word"]] = {}
+        if not statistics[line["word"]].has_key(line[feature]):
+            statistics[line["word"]][line[feature]] = 0
+        statistics[line["word"]][line[feature]] += 1 
     return statistics
 
 def add2Results(partial, store):
@@ -59,11 +59,14 @@ if __name__=="__main__":
         print "usage: getStats.py folder format[json|...]\nFolder should contain files in .t extension"
     folder = os.path.abspath(sys.argv[1])
     fmt  = sys.argv[2]
+    i = 0
     for fName in tools.files(folder, ".*"):
         fName = os.path.abspath(fName)
-        print fName
-        if fmt = 'json':
+        if fmt == 'json':
+            if i%100 == 0:
+                print  i, " files finished"
             partial = parseJson(fName, isNNP, "NER")
+            i+=1
         else:
             partial = parsePostNER(fName)
         add2Results(partial, results)
