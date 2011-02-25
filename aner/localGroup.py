@@ -3,53 +3,37 @@
 import os
 import sys
 import tools
-import pickle
 import json
 
+def group(lines, i, tag):
+    parts = []
+    curLine = lines[i]
+    if not curLine["virtual"] and curLine["NER"] == tag:
+        while curLine["NER"] == tag or curLine["POS"] =="DET":
+            if not curLine["POS"] == "DET":
+                parts.append(curLine["word"])
+            else:
+                parts.append("Al")
+            i = i+1
+            curLine = lines[i]
+        if len(filter( lambda x: x != "Al", parts)) > 1:
+            newLine = {"word": ' '.join(parts), "POS": "NNP", "NER": tag, "virtual": True, "POS1": '', "POS2":''}
+            lines.append(newLine)
+    return i
+
 def localGroup(fName):
-    jText = json.load(open(fName,'r'))
-    f = open(fName+'.o','w')
-    lines = jText
-    length = len(lines)
+    lines = json.load(open(fName,'r'))
     i = 0
-    result = []
-    while i < length:
-        curLine = lines[i]
-        newLine = curLine
-        txt2 = ''
-        if curLine["NER"]== "PER":
-            while curLine["NER"] == "PER" or curLine["POS"] =="DET":
-                txt2 = txt2 + curLine["word"] +' ' 
-                i = i+1
-                curLine = lines[i]
-            i = i-1
-            newLine["word"] = txt2
-            newLine["virtual"] = True
-        elif curLine["NER"]== "LOC":
-            while curLine["NER"] == "LOC"  or curLine["POS"] =="DET":
-                txt2 = txt2 +curLine["word"]+' '
-                i = i+1
-                curLine = lines[i]
-            i = i-1
-            newLine["word"] = txt2
-            newLine["virtual"] = True
-        elif curLine["NER"]== "ORG":
-            while curLine["NER"] == "ORG" or curLine["POS"] =="DET":
-                txt2 = txt2+curLine[0]+' '
-                i = i+1
-                curLine = lines[i]
-            i = i-1
-            newLine["word"] = txt2
-            newLine["virtual"] = True
-        else:
-            newLine["word"] = curLine["word"]            
-            
-        i = i+1
-        result.append(newLine)
-    json.dump(result,f)
-    f.close()
-    
-    
+    while i < len(lines):
+        j = i
+        i = group(lines, i, "PER")
+        i = group(lines, i, "LOC")
+        i = group(lines, i, "ORG")
+        if i == j:
+            i += 1
+    fh = open(fName, 'w')
+    json.dump(lines, fh)
+    fh.close()
 
 if __name__ == "__main__":
     fName = os.path.abspath(sys.argv[1])    
