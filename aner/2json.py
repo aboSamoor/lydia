@@ -9,10 +9,6 @@ postNERHeader = {0: "word", 1: "POS", 2:"POS1", 3:"POS2", 4:"NER"}
 def convert(header, f, delim):
     fh = open(f, 'r')
     text = fh.read()
-    try:
-        text = text.decode('utf-8')
-    except:
-        print f
     fh.close()
     result = []
     for line in text.splitlines():
@@ -28,6 +24,10 @@ def convert(header, f, delim):
         result.append(taggedWords)
     return result
 
+def print_exception():
+    exc_type, exc_value = sys.exc_info()[:2]
+    print 'Handling %s exception with message "%s"' % \
+        (exc_type.__name__, exc_value)
 
 if __name__=="__main__":
     if len(sys.argv) < 2:
@@ -44,5 +44,12 @@ if __name__=="__main__":
     else:
         sys.exit()
     fh = open(newFile, 'w')
-    json.dump(result, fh)
+    try:
+        json.dump(result, fh)
+    except:
+        print "Error "+newFile +" failed to be written"
+        print_exception()
+        fh.close()
+        os.remove(newFile)
+        sys.exit()
     fh.close()
