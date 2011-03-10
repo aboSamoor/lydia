@@ -84,20 +84,19 @@ def rows(text, delim):
 
 def print_exception():
     exc_type, exc_value = sys.exc_info()[:2]
-    print >> sys.stderr ,'Handling %s exception in function %s with message "%s"' % \ 
-        (exc_type.__name__, whoCalled, exc_value)
+    print >> sys.stderr ,'Handling %s exception in function %s with message "%s"' %(exc_type.__name__, whoCalled(), exc_value)
 
 def dumpJson(struct,fName):
-    fh = tempfile.NamedTemporaryFile('w')
+    tmpFile = tempfile.NamedTemporaryFile('w')
+    fh = tmpFile.file
     try:
         json.dump(struct, fh)
         fh.close()
-        shutil.move(fh.name, fName)
+        shutil.copy(tmpFile.name, fName)
     except:
         print >> sys.stderr, "Failed to write the structure in", fName
         print_exception()
-        fh.close()
-    os.remove(fh.name)
+    tmpFile.close()
 
 def loadJson(fName):
     try:
