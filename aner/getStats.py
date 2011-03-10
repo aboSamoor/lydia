@@ -5,7 +5,6 @@ import sys
 import settings
 import re
 import tools
-import json
 
 
 def isNNP(line):
@@ -31,7 +30,9 @@ def parsePostNER(fin):
     return statistics
 
 def parseJson(fin, constraint, feature):
-    jText = json.load(open(fin, 'r'))
+    jText = tools.loadJson(fin)
+    if jText == -1:
+        return -1
     statistics = {}
     lines = filter(constraint, jText)
     for line in lines:
@@ -71,6 +72,4 @@ if __name__=="__main__":
             partial = parsePostNER(fName)
         add2Results(partial, results)
     statFile = os.path.join(folder, 'stats')
-    fh = open(statFile,'w')
-    json.dump(results,fh)
-    fh.close()
+    tools.dumpJson(results, statFile)

@@ -24,10 +24,6 @@ def convert(header, f, delim):
         result.append(taggedWords)
     return result
 
-def print_exception():
-    exc_type, exc_value = sys.exc_info()[:2]
-    print 'Handling %s exception with message "%s"' % \
-        (exc_type.__name__, exc_value)
 
 if __name__=="__main__":
     if len(sys.argv) < 2:
@@ -43,13 +39,4 @@ if __name__=="__main__":
             result = convert(postNERHeader, f, '\t')
     else:
         sys.exit()
-    fh = open(newFile, 'w')
-    try:
-        json.dump(result, fh)
-    except:
-        print "Error "+newFile +" failed to be written"
-        print_exception()
-        fh.close()
-        os.remove(newFile)
-        sys.exit()
-    fh.close()
+    tools.dumpJson(newFile)

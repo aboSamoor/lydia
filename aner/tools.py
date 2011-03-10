@@ -4,6 +4,13 @@ import os
 import sys
 import NER
 import re
+import json
+import inspect
+import tempfile
+import shutil
+
+def whoCalled():
+    return inspect.stack()[2][3]
 
 def get_columns(text, delimiter, cols):
     result = []
@@ -74,6 +81,36 @@ def rows(text, delim):
     for line in text.splitlines():
         if len(line.split(delim)) == count:
             yield line
+
+def print_exception():
+    exc_type, exc_value = sys.exc_info()[:2]
+    print >> sys.stderr ,'Handling %s exception in function %s with message "%s"' % \ 
+        (exc_type.__name__, whoCalled, exc_value)
+
+def dumpJson(struct,fName):
+    fh = tempfile.NamedTemporaryFile('w')
+    try:
+        json.dump(struct, fh)
+        fh.close()
+        shutil.move(fh.name, fName)
+    except:
+        print >> sys.stderr, "Failed to write the structure in", fName
+        print_exception()
+        fh.close()
+    os.remove(fh.name)
+
+def loadJson(fName):
+    try:
+        fh = open(fName,'rb')
+        result = json.load(fh)
+        fh.close()
+        return result
+    except:
+        print >> sys.stderr, fName, "Failed to be interpreted as a Json file because of"
+        print_exception()
+        fh.close()
+        return -1
+
 
 if __name__== "__main__":
     fName = os.path.abspath(sys.argv[1])

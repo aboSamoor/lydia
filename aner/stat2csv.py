@@ -1,7 +1,6 @@
 #! /usr/bin/env python
 import os, sys
 import tools
-import json
 
 def getTags(store):
     b=set()
@@ -25,7 +24,9 @@ if __name__=="__main__":
     if len(sys.argv) < 2:
         print "usage: stat2csv.py fileName\n the file should in json format"
     f = os.path.abspath(sys.argv[1])
-    store = json.load(open(f ,'r'))
+    store = tools.loadJson(f)
+    if store == -1:
+        sys.exit()
     records = []
     for k in store.keys():
         records.append(record(store[k],k))
