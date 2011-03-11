@@ -32,8 +32,12 @@ def localGroup(fName):
         if i == j:
             i += 1
     fh = open(fName, 'w')
-    json.dump(lines, fh)
-    fh.close()
+    try:
+        json.dump(lines, fh)
+        fh.close()
+    except:
+        sys.exit()
+    
 
 if __name__ == "__main__":
     fName = os.path.abspath(sys.argv[1])    
