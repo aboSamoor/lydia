@@ -11,6 +11,14 @@ import json
 def isNNP(line):
     return line["POS"][:3] == "NNP"
 
+def isNNPVirt(line):
+    try:
+        if len(line["POS"]) > 2:
+            return line["POS"][:3] == "NNP" and line["virtual"]
+    except:
+        print line
+        return False
+
 def parsePostNER(fin):
     statistics = {}
     text = tools.getText(fin)
@@ -65,7 +73,7 @@ if __name__=="__main__":
         if fmt == 'json':
             if i%100 == 0:
                 print  i, " files finished"
-            partial = parseJson(fName, isNNP, "NER")
+            partial = parseJson(fName, isNNPVirt, "NER")
             i+=1
         else:
             partial = parsePostNER(fName)
