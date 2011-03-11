@@ -1,6 +1,6 @@
 Modify your bashrc
 # Add custom Python modules to the Python path.
-PYTHONPATH=$PYTHONPATH:~/sandbox/lydia
+PYTHONPATH=$PYTHONPATH:/path/to/your/lydia/
 export PYTHONPATH
 
 you can change ~/sandbox/ to wherever you are keeping the code
