@@ -3,7 +3,6 @@
 import os
 import sys
 import tools
-import json
 
 def group(lines, i, tag):
     parts = []
@@ -22,7 +21,9 @@ def group(lines, i, tag):
     return i
 
 def localGroup(fName):
-    lines = json.load(open(fName,'r'))
+    lines = tools.loadJson(fName)
+    if lines == -1:
+        return -1
     i = 0
     while i < len(lines):
         j = i
@@ -31,6 +32,7 @@ def localGroup(fName):
         i = group(lines, i, "ORG")
         if i == j:
             i += 1
+<<<<<<< HEAD
     fh = open(fName, 'w')
     try:
         json.dump(lines, fh)
@@ -38,6 +40,9 @@ def localGroup(fName):
     except:
         sys.exit()
     
+=======
+    tools.dumpJson(lines, fName)
+>>>>>>> 4a82124f780f863a0509f2ac7bbcd807053327e0
 
 if __name__ == "__main__":
     fName = os.path.abspath(sys.argv[1])    

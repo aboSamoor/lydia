@@ -31,28 +31,13 @@ def tag(jText, dic):
                 curLine["NER"] = list(dic[curLine["word"]])[0]
     return jText
 
-def print_exception():
-    exc_type, exc_value = sys.exc_info()[:2]
-    print 'Handling %s exception with message "%s"' % \
-        (exc_type.__name__, exc_value)
 
 def tagFile(f, dictionary):
-    try:
-        jText = json.load(open(f, 'r'))
-    except:
-        print "Error "+ f +" failed to be loaded"
-        print_exception()
+    jText = tools.loadJson(f)
+    if jText == -1:
         return -1
     jNewText = tag(jText, dictionary)
-    fh = open(f+".t", 'w')
-    try:
-        json.dump(jNewText, fh)
-        fh.close()
-    except:
-        print "Error "+ f +" failed to be written"
-        print_exception()
-        fh.close()
-        os.remove(f+".t")
+    tools.dumpJson(jNewText, f+".t")
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
