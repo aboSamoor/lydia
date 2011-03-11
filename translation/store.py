@@ -40,15 +40,9 @@ class store():
 
     def save(self):
         print "File saved and the remaining items are: ", self.q.qsize()
-        fh = open(self.file, 'w')
         self.lock.acquire()
-        try:
-            json.dump(self.dictionary, fh)
-            self.lock.release()
-            fh.close()
-        except:
-            self.lock.release()
-            fh.close()
+        tools.dumpJson(self.dictionary, self.file)
+        self.lock.release()
     
     def worker(self):
         while True:
@@ -60,11 +54,15 @@ class store():
                 self.save()
 
     def prepare(self, items):
-        for e in items:
-            self.q.put(e)
-        for i in range(self.numOfWorkers):
-            t = threading.Thread(target=self.worker)
-            t.daemon = True
-            t.start()
-        self.q.join()
-        self.save()
+        if len(items) > 50:
+            for e in items:
+                self.q.put(e)
+            for i in range(self.numOfWorkers):
+                t = threading.Thread(target=self.worker)
+                t.daemon = True
+                t.start()
+            self.q.join()
+            self.save()
+        else:
+            for e in items:
+                self.get(e)
