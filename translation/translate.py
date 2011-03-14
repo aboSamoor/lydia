@@ -5,24 +5,36 @@ import json
 import sys, os
 import settings
 import store
-import urllib
+import urllib2
 import lydia.aner.tools as tools
+import types
+import urllib
 
 def googleTran(query, src= 'ar', to= 'en'):
     try:
         c = httplib.HTTPSConnection('www.googleapis.com')
-        query = query.encode('utf-8')
-        c.request('GET', '/language/translate/v2?key='+settings.key+'&q=+'+query+'&source='+src+'&'+'target='+to)
+#        c.set_debuglevel(1)
+        if type(query) == types.UnicodeType:
+            query = query.encode('utf')
+        query = urllib2.quote(query)
+        url = '/language/translate/v2?key='+settings.key+'&q=+'+query+'&source='+src+'&'+'target='+to
+        c.request('GET', url)
         d = c.getresponse()
-        c.close()
     except:
         tools.print_exception()
         return ''
     if int(d.status) == 200:
-        results = json.load(d)
-        return results["data"]["translations"][0]["translatedText"]
+        try:
+            results = json.load(d)
+            c.close()
+            return results["data"]["translations"][0]["translatedText"]
+        except:
+            tools.print_exception()
+            c.close()
+            return ''
     else:
-        print >> sys.stderr, "Error: "+d.status+" "+d.reason
+        print >> sys.stderr, "Error: "+str(d.status)+" "+str(d.reason)
+        c.close()
         return ''
 
 
@@ -31,13 +43,17 @@ def wikipediaTran():
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print "usage: $translate.py repository word" 
+        print "usage: $translate.py repository [word | fileOfWords]" 
         sys.exit()
-    engine = store.store(tran, os.path.abspath(sys.argv[1]))
-    if len(sys.argv[2:] > 10):
+    engine = store.store(googleTran, os.path.abspath(sys.argv[1]))
+    if os.path.isfile(os.path.abspath(sys.argv[2])):
+        words = [l.decode('utf-8') for l in open(os.path.abspath(sys.argv[2]),'r').read().splitlines()]
+    else:
         words = [w.decode('utf-8') for w in sys.argv[2:]]
+
+    if len(words) > 10:
         engine.prepare(words)
     else:
-        for w in sys.argv[2:]:
-            print w,engine.get(w.decode('utf-8')).encode('utf-8')
+        for w in words:
+            print w.encode('utf-8'),engine.get(w.decode('utf-8')).encode('utf-8')
     engine.save()
