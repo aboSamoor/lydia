@@ -90,7 +90,7 @@ def dumpJson(struct,fName):
     tmpFile = tempfile.NamedTemporaryFile('w')
     fh = tmpFile.file
     try:
-        json.dump(struct, fh)
+        json.dump(struct, fh,indent=0)
         fh.close()
         shutil.copy(tmpFile.name, fName)
     except:
