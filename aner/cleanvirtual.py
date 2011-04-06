@@ -2,24 +2,13 @@
 
 import os
 import sys
-import tools
-import json
+import lydia.aner.tools as tools
 
 if __name__ == "__main__":
     fName = os.path.abspath(sys.argv[1])
-    f = open(fName,'r')
-    try:
-        lines = json.load(f)
-    except:
-        sys.exit()
+    lines = tools.loadJson(fName)
     newLines = []
     for i in range(len(lines)):
         if lines[i]["virtual"] == False:
             newLines.append(lines[i])
-    fh = open(fName, 'w')
-    try:
-        json.dump(newLines,fh)
-    except:
-        print fName
-            
-        
+    tools.dumpJson(newLines,fName)
