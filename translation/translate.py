@@ -38,6 +38,28 @@ def googleTran(query, src= 'ar', to= 'en'):
         return ''
 
 
+def getWords(stmt):
+    words = stmt.split(' ')
+    res = []
+    abd = unichr(0x0639) + unichr(0x0628) + unichr(0x62f)
+    i = 0
+    DET = unichr(0x0627) + unichr(0x0644)
+    while i < len(words):
+        if words[i] == DET:
+            i += 1
+            if i < len(words):
+                res.append(DET+words[i])
+                i += 1
+        elif words[i] == abd:
+            i += 1
+            if i < len(words):
+                res.append(abd+' '+words[i])
+                i+=1
+        else:            
+            res.append(words[i])
+            i += 1
+    return res
+
 def wikipediaTran():
     pass
 
@@ -51,6 +73,10 @@ if __name__ == "__main__":
     else:
         words = [w.decode('utf-8') for w in sys.argv[2:]]
 
+    res = []
+    for line in words:
+        res.extend(getWords(line))
+    words = res
     if len(words) > 10:
         engine.prepare(words)
     else:
