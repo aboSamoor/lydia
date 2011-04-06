@@ -5,10 +5,13 @@ import sys
 import tools
 import pickle
 import json
+import lydia.aner.csvConverter as csvConverter
 
-def isNNP(line):
+def isTag(line, tag):
     if line["word"] != '':
-        if line["POS"][:3] == "NNP":
+        if len(line["POS"]) < len(tag):
+            return False
+        if line["POS"][:len(tag)] == tag:
             return True
     return False
 
@@ -18,17 +21,23 @@ def tag(jText, dic):
     for i in range(len(lines)):
         curLine = lines[i]
         curLine["NER"] = 'O'
-        if isNNP(curLine):
-            if not dic.has_key(curLine["word"]):
-                if i > 0:
-                    if isNNP(lines[i-1]):
+        if isTag(curLine, "NNP"):
+            if curLine["word"] in dic:
+                curLine["NER"] = dic[curLine["word"]]["tag"]
+            elif i > 0:
+                    if isTag(lines[i-1],"NNP"):
                         curLine["NER"] = lines[i-1]["NER"]
-                    elif lines[i-1]["POS"] == "DET":
+                    elif isTag(lines[i-1],"DET"):
                         if i > 1:
-                            if isNNP(lines[i-2]):
+                            if isTag(lines[i-2], "NNP"):
                                 curLine["NER"] = lines[i-2]["NER"]
-            else:
-                curLine["NER"] = list(dic[curLine["word"]])[0]
+        #To detect Ahmad Al Khalidi
+        #if Khalidi is not NNP
+        elif isTag(curLine, "NN"):
+            if i > 1:
+                if isTag(lines[i-1],"DET"):
+                    if isTag(lines[i-2], "NN"):
+                        curLine["NER"] = lines[i-2]["NER"]
     return jText
 
 
@@ -41,10 +50,11 @@ def tagFile(f, dictionary):
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
-        print "usage: tag.py dictionary file\nfile expected in json format"
+        print "usage: tag.py dictionary.csv file\nfile expected in json format"
     f = os.path.abspath(sys.argv[2])
     dicName = os.path.abspath(sys.argv[1])
-    dictionary = pickle.load(open(dicName,'r'))
+    listOfDicts= csvConverter.csv2dicts(dicName)
+    dictionary = csvConverter.buildDictionary(listOfDicts, "word")
     if os.path.isfile(f):
         tagFile(f, dictionary)
     elif os.path.isdir(f):
@@ -54,4 +64,3 @@ if __name__ == "__main__":
                 print "finished", i, "files"
             tagFile(fName,dictionary)
             i+=1
-
