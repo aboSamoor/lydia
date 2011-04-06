@@ -80,18 +80,63 @@ def dicts2csv(listOfDicts, fName):
  
 def buildDictionary(listOfDicts, key):
     dictionary = {}
-    for e in listOfDicts:
-        keyWord = e[key]
-        dictionary[keyWord] = e
-        del dictionary[keyWord][key]
+    #case that the dictionary is two keys
+    if len(listOfDicts[0].keys()) == 2:
+        k,v = listOfDicts[0].keys()
+        v = v if k == key else k
+        for e in listOfDicts:
+            dictionary[e[key]] = e[v]
+    else:
+        for e in listOfDicts:
+            keyWord = e[key]
+            dictionary[keyWord] = e
+            del dictionary[keyWord][key]
     return dictionary
 
-if __name__ == "__main__":
-    if len(sys.argv) < 2:
-        print "usage: $csv2json filename\ncsv file should contain the columns header in the first row, the first column will be considered as a key value\n the result will be a json dictionary"
-        sys.exit()
-    fName = os.path.abspath(sys.argv[1])
-#    result = buildDictionary(convert(fName),"key")
+def buildListOfDictionaries(Dictionary, keyTag):
+    resList = []
+    for key in Dictionary:
+        tmpDict ={keyTag:key}
+        if type(Dictionary[key]) == types.DictType:
+            for key2 in Dictionary[key]:
+                tmpDict[key2] = Dictionary[key][key2]
+        else:
+            tmpDict[keyTag+"2"] = Dictionary[key]
+        resList.append(tmpDict)
+    return resList 
+
+def csv2json(fName):
     result = csv2dicts(fName)
     newFile = fName.split(os.path.extsep)[0]+".json"
     tools.dumpJson(result, newFile)
+
+def csv2dict(fName):
+    result = buildDictionary(csv2dicts(fName), "Arabic")
+    newFile = fName.split(os.path.extsep)[0]+".json"
+    tools.dumpJson(result, newFile)
+
+def json2csv(fName):
+    tmp = tools.loadJson(fName)
+    if type(tmp) == types.DictType:
+        Dicts = buildListOfDictionaries(tmp,"key")
+    elif type(tmp) == types.ListType:
+        Dicts = tmp
+    else:
+        print "type unknown"
+        return
+    dicts2csv(Dicts, fName+".csv")
+
+if __name__ == "__main__":
+    if len(sys.argv) < 2:
+        print "usage: $csvConverter filename\ncsv file should contain the columns header in the first row, the first column will be considered as a key value\n the result will be a json dictionary"
+        sys.exit()
+    fName = os.path.abspath(sys.argv[1])
+    ext = fName.split('.')[-1] 
+    if ext == "csv":
+        if len(sys.argv) > 2:
+            if sys.argv[2] == "dict":
+                csv2dict(fName)
+        else:
+            csv2json(fName)
+    if ext == "json":
+       json2csv(fName)
